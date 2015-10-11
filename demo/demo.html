@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html ng-app="demo">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <style type="text/css" media="screen">
+    .q-loading{
+      background-color: gray;
+    }
+    .q-success{
+      background-color: yellow;
+    }
+    .q-failed{
+      background-color: red;
+    }
+    .status{
+      display: none;
+    }
+    .status.show{
+      display: inline;
+    }
+  </style>
+  <script src="/angular/angular.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/public.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/controller.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/promise.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/group.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/event.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/status.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body ng-controller="demoCtrl">
+  <button type="button" q-click="btnC()" q-group>
+    <span class="status" q-status-loading="show">xxx</span>
+    one button
+  </button>
+  <script type="text/javascript" charset="utf-8">
+  angular.module('demo',['ng','ng-loading']).controller('demoCtrl', ['$q','$scope','$timeout',function ($q,$scope,$timeout) {
+      var i = 0;
+      function makePromise(deferred,resolve,value){
+        if (resolve)
+          deferred.resolve(value)
+        else 
+          deferred.reject(value)
+      }
+      $scope.btnC = function(){
+        var deferred = $q.defer()
+        var promise = deferred.promise
+        i = (i%2) + 1;
+        console.log(i);
+        if(i%2 === 0 ){
+          $timeout(function(){
+            makePromise(deferred,true)
+          },3000)
+        }else {
+          $timeout(function(){
+            makePromise(deferred,false)
+          },3000)
+        }
+        return promise
+      }
+  }])
+  </script>
+
+  <script src="//localhost:35729/livereload.js"></script>
+</body>
+</html>
