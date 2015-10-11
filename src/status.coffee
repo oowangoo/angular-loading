@@ -15,31 +15,36 @@ module.directive('qStatusLoading',[()->
             element.removeClass(cls)
           )
         groupCtrl.attend(onPromise)
-        scope.$on("#$destroy",()->
-          promiseCtrl.unAttend(onPromise)
+        scope.$on("$destroy",()->
+          groupCtrl.unAttend(onPromise)
         )
   }
 ])
-
-  module.directive('qStatusSuccess',[()->
+createDirectie = (type)->
+  directiveName = "qStatus#{type}"
+  lowerType = type.toLowerCase()
+  module.directive(directiveName,[()->
     return { 
       restrict: 'A'
       require:"^qGroup"
       compile:(tElement,tAttr)->
-        cls = tAttr['qStatusLoading']
+        cls = tAttr[directiveName]
         return (scope,element,attrs,groupCtrl)->
           
           return unless cls 
 
           onPromise = (promiseProxy)->
-            promiseProxy.loading(()->
+            promiseProxy[lowerType](()->
               element.addClass(cls)
-            ).ready(()->
+            ).finish(()->
               element.removeClass(cls)
             )
           groupCtrl.attend(onPromise)
-          scope.$on("#$destroy",()->
-            promiseCtrl.unAttend(onPromise)
+          scope.$on("$destroy",()->
+            groupCtrl.unAttend(onPromise)
           )
     }
   ])
+
+for t in ['Success','Failed']
+  createDirectie(t)

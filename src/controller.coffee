@@ -31,10 +31,10 @@ module
     listener.push fn
   @unAttend = (fn)->
     r = null
-    i = promiseCtrlList.indexOf(fn)
+    i = listener.indexOf(fn)
     #remove this node
     if i > -1 
-      r = promiseCtrlList.splice(i,1)
+      r = listener.splice(i,1)
     return r ;
   @
 ])

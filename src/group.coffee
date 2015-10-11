@@ -36,6 +36,12 @@ module
       promiseCtrl.attend(fn)
     else 
       unAttendList.push({ctrl:promiseCtrl,callback:fn})
+  @unAttend = ( promiseCtrl,fn)->
+    unless fn
+      fn =  promiseCtrl
+      promiseCtrl = @get()
+    if promiseCtrl #maybe find ctrl by name
+      promiseCtrl.@unAttend(fn)
 
   @get = ()->
     return promiseCtrlList[0]
