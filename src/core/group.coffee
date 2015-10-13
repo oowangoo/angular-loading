@@ -1,7 +1,7 @@
 module
-.controller("qGroupCtrl",[()->
+.controller("qGroupCtrl",['$attrs',($attrs)->
   promiseCtrlList = []
-  config = null
+  config = getAttributeConfig($attrs)
   unAttendList = []
 
   processQueue = (promiseCtrl)->
@@ -45,9 +45,10 @@ module
 
   @get = ()->
     return promiseCtrlList[0]
-
+  @getConfig = ()->
+    return config;
   @setConfig = (cf)->
-    ;
+    config = cf
   @
 ])
 .directive("qGroup",[()->
@@ -57,9 +58,7 @@ module
     controller:"qGroupCtrl"
     compile:(tElement,tAttrs)->
       #get attr config setting
-      config = {}
       return (scope, element, attrs,qGroupCtrl) ->
-        qGroupCtrl.setConfig(config)
         scope.qGroupCtrl = qGroupCtrl
   }
 ])

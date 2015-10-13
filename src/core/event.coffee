@@ -15,18 +15,7 @@ module
     compile:(tElement,tAttrs)->
       fn = $parse(tAttrs["qClick"])
       #get attr config 
-      config = {
-        delay:tAttrs['delay']
-        failed:{
-          delay:tAttrs['failed']
-        }
-        success:{
-          delay:tAttrs['success']
-        }
-        loading:{
-          delay:tAttrs['loading']
-        }
-      }
+      config = getAttributeConfig(tAttrs)
       isAnimate = qEventConfig.animate
       return (scope, element, attrs,ctrls) ->
         qGroupCtrl = ctrls[0]
@@ -34,8 +23,7 @@ module
         
         if qGroupCtrl
           qGroupCtrl.register qPromiseCtrl
-
-        qPromiseCtrl.setConfig config
+          qPromiseCtrl.setConfig(qGroupCtrl.getConfig(),config)
 
         element.on('click',(event)->
           return if qPromiseCtrl.get()

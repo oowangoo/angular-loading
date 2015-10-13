@@ -27,10 +27,14 @@ module.constant("qConfig",{
       args = Array.prototype.slice.call(arguments)
     args.unshift(qConfig)
     config = extendOptions.apply(@,args)
+    
+    extendDefault = (status)->
+      unless config[status] 
+        config[status] = {}
+      config[status].delay = config[status].delay || config.delay
 
-    config.loading.delay = config.loading.delay || config.delay
-    config.failed.delay = config.failed.delay || config.delay
-    config.success.delay = config.success.delay || config.delay
+    for s in ['success','failed','loading']
+      extendDefault(s)
     return config
 
 

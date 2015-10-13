@@ -1,5 +1,5 @@
 module
-.controller("qPromiseCtrl",['PromiseProxy',(PromiseProxy)->
+.controller("qPromiseCtrl",['PromiseProxy','$attrs',(PromiseProxy,$attrs)->
   lastPromise = null
   config = null
   
@@ -10,6 +10,7 @@ module
     if arguments.length > 0 
       args = Array.prototype.slice.call(arguments);
     config = PromiseProxy.extendConfig(args)
+    console.log config
   @getConfig = ()->
     return config
   @get = ()->

@@ -26,7 +26,25 @@ $timeout = null
 nextTick = (callback,delay)->
   if callback and angular.isFunction(callback)
     $timeout(callback,delay||0)
-    
+
+getAttributeConfig = (attrs)->
+  config = {
+  }
+  if angular.isDefined(attrs['delay'])
+    config.delay = attrs['delay']
+
+  readStatus = (state)->
+    config[state] = {}
+    if angular.isDefined(attrs[state])
+      config[state].delay = attrs[state]
+    else 
+      config[state].delay = config.delay
+
+  for s in ['success','failed','loading']
+    readStatus(s)
+  return config 
+
+
 module = angular.module("ng-loading",['ng']).run(['$timeout',($t)->
   $timeout = $t
 ])
