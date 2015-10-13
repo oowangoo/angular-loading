@@ -20,9 +20,12 @@ module.directive('qStatus',[()->
       for ele,i in selectedElements
         selectedScopes[i].$destroy()
         ele.clone.remove()
+
+      if selectedElements.length is 0
+        element.removeClass("ng-hide")
+      
       selectedElements.length = 0
       selectedScopes.length = 0 
-
       if (selected = statusCtrl.cases[status] || statusCtrl.cases["Default"]) 
         for sel in selected
           sel.transclude((caseElement,selectedScope)->
@@ -33,7 +36,10 @@ module.directive('qStatus',[()->
             selectedElements.push(block);
             anchor.after(caseElement)
           )
-      selectedClass = status
+      
+      if selectedElements.length is 0 
+        element.addClass("ng-hide")
+
     onPromise = (promiseProxy)->
       promiseProxy.loading(()->
         changeStatus('Loading')
