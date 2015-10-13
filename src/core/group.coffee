@@ -70,19 +70,39 @@ module
     link:(scope,element,attrs,ctrls)->
       groupCtrl = ctrls[0]
       promiseCtrl = ctrls[1]
-
-      p = scope.$eval(attrs.qInit);
-      return unless angular.isPromise(p)
-
       groupCtrl.register promiseCtrl
-      proxy = promiseCtrl.push p 
-      proxy.loading(()->
-        element.addClass("q-init")
-      ).ready(()->
-        element.removeClass("q-init")
-        groupCtrl.remove(promiseCtrl)
-      )
+
+      excute = ()->
+        return if promiseCtrl.get()
+        p = scope.$eval(attrs.qInit);
+        unless angular.isPromise(p) 
+          groupCtrl.remove(promiseCtrl)      
+          return ;
+        proxy = promiseCtrl.push p 
+        proxy.loading(()->
+          element.addClass("q-init")
+        ).success(()->
+          element.removeClass("q-init")
+          groupCtrl.remove(promiseCtrl)
+        ) .finally(promiseCtrl.pop)
+        return ;
+      excute()
+      
+      promiseCtrl.retry = excute
+      return ;
+
   }
+])
+.directive("qRetry",[()->
+  restrict:"A"
+  require:"^qInit"
+  priority:5
+  link:(scope,element,attrs,qInitCtrl)->
+    element.on('click',()->
+      qInitCtrl.retry()
+      return ;
+    )
+    return ;
 ])
 .directive("qCloak",[()->
   restrict:"C"
