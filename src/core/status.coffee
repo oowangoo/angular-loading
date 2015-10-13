@@ -3,8 +3,9 @@ module.controller("qStatusCtrl",()->
   @cases = {}
   return @
 )
+#like ngSwitch
 module.directive('qStatus',[()->
-  restrict: 'AC'
+  restrict: 'EA'
   controller:"qStatusCtrl"
   require:["^qGroup",'qStatus']
   link:(scope,element,attrs,ctrls)->
@@ -12,16 +13,27 @@ module.directive('qStatus',[()->
     groupCtrl = ctrls[0]
     statusCtrl = ctrls[1]
 
-    selectedElement = []
-    
+    selectedElements = []
+    selectedScopes = []
+
     changeStatus = (status)->
-      for ele in selectedElement
-        ele.remove()
-      selectedElement.length = 0
+      for ele,i in selectedElements
+        selectedScopes[i].$destroy()
+        ele.clone.remove()
+      selectedElements.length = 0
+      selectedScopes.length = 0 
+
       if (selected = statusCtrl.cases[status] || statusCtrl.cases["Default"]) 
         for sel in selected
-          selectedElement.push sel
-          element.append(sel)
+          sel.transclude((caseElement,selectedScope)->
+            caseElement.addClass(status.toLowerCase())
+            selectedScopes.push(selectedScope);
+            anchor = sel.element
+            block = { clone: caseElement}
+            selectedElements.push(block);
+            anchor.after(caseElement)
+          )
+      selectedClass = status
     onPromise = (promiseProxy)->
       promiseProxy.loading(()->
         changeStatus('Loading')
@@ -49,15 +61,18 @@ onEnd = (element,cls,rmCls)->
 createStatusDirectie = (type)->
   directiveName = "qStatus#{type}"
   lowerType = type.toLowerCase()
+  # like ngSwitchWhen
   module.directive(directiveName,[()->
     return {
       restrict: 'AC'
       require:"^qStatus"
-      link:(scope,element,attrs,statusCtrl)->
+      priority:1200
+      transclude: 'element'
+      link:(scope,element,attrs,statusCtrl,$transclude)->
         statusCtrl.cases[type] = statusCtrl.cases[type] || []
-        statusCtrl.cases[type].push(element)
-        element.addClass(lowerType)
-        element.remove()
+        statusCtrl.cases[type].push({ transclude: $transclude, element: element })
+        # element.remove()
+        return ;
     }
   ])
 for t in ['Success','Failed','Loading','Default']
