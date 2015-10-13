@@ -12,7 +12,7 @@ paths = {
   compass:"src/style/**/*.scss"
   tmp:".tmp"
 }
-gulp.task("compass",['cleanBuild'],(done)->
+gulp.task("compass",(done)->
   gulp.src(paths.compass)
   .pipe(plumber())
   .pipe(compass({sass:"src",css:paths.tmp}))
@@ -34,7 +34,7 @@ gulp.task("coffeeConcat",['concat'],()->
   .pipe(connect.reload())
 )
 
-gulp.task("coffee",['cleanBuild'],(done)->
+gulp.task("coffee",(done)->
   gulp.src(paths.coffee)
   .pipe(plumber())
   .pipe(coffee({bare:true}))
@@ -63,5 +63,5 @@ gulp.task('connect',(done)->
   })
 )
 
-gulp.task("build",['cleanBuild','compass','coffee'])
+gulp.task("build",['compass','coffee'])
 gulp.task("s",['build','watch','connect'])

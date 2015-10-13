@@ -1,0 +1,31 @@
+.q-init{
+  height: 300px;
+  position: relative;
+  >.q-status{
+    text-align: center;
+    display: inherit;
+    &:before{
+      content:' ';
+      height: 100%;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .loading{
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 40px;
+    }
+    position: absolute;
+    top: 0;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+
+  }
+}
+.q-status{
+  display: none;
+}
+.q-cloak{
+  display: none!important;
+}
