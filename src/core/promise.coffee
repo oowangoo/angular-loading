@@ -12,13 +12,6 @@ number 负数时不自动关闭,loading此设置无效
 ###
 module.constant("qConfig",{
   delay:100
-  failed:{
-    delay:2000
-  }
-  loading:{}
-  success:{
-    delay:2000
-  }
 })
 
 .service("PromiseProxy",['$timeout','$q','$exceptionHandler','qConfig',($timeout,$q,$exceptionHandler,qConfig)->

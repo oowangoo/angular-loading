@@ -6,7 +6,10 @@ module
   listener = []
 
   @setConfig = ()->
-    config = PromiseProxy.extendConfig(arguments)
+    args = null
+    if arguments.length > 0 
+      args = Array.prototype.slice.call(arguments);
+    config = PromiseProxy.extendConfig(args)
   @getConfig = ()->
     return config
   @get = ()->

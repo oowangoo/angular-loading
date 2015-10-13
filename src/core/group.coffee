@@ -16,7 +16,7 @@ module
     unAttendList = temp
 
   @register = (qPromiseCtrl)->
-    qPromiseCtrl.setConfig(config)
+    # qPromiseCtrl.setConfig(config)
     promiseCtrlList.push qPromiseCtrl
     processQueue(qPromiseCtrl)
 
@@ -64,12 +64,19 @@ module
   }
 ])
 .directive("qInit",[()->
+  config = {
+    failed:{
+      delay:-1
+    }
+    delay:0
+  }
   return {
     require:["qGroup",'qInit']
     controller:"qPromiseCtrl"
     link:(scope,element,attrs,ctrls)->
       groupCtrl = ctrls[0]
       promiseCtrl = ctrls[1]
+      promiseCtrl.setConfig(config)
       groupCtrl.register promiseCtrl
 
       excute = ()->
