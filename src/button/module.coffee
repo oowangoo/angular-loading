@@ -19,8 +19,9 @@ angular.module("q-button",['ng-loading'])
     restrict: 'C'
     replace:true
     transclude:true
+    priority:1000
     template:(element,attr)->
       tag = element[0].tagName
-      return "<#{tag} q-group><ng-transclude></ng-transclude>#{template}</#{tag}>";
+      return "<#{tag} q-group delay='2000' loading='300'><ng-transclude></ng-transclude>#{template}</#{tag}>";
   }
 ])
