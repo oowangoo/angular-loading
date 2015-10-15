@@ -66,7 +66,7 @@ gulp.task("cleanRealese",()->
   gulp.src('release/',{read:false}).pipe(clean())
 )
 gulp.task("release",['cleanRealese'],()->
-  gulp.src(['src/core/**/*'])
+  gulp.src(['src/core/public.coffee','src/core/*.coffee'])
   .pipe(concat("all.coffee"))
   .pipe(coffee())
   .on('error',gutil.log)

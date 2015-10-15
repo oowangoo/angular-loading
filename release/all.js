@@ -1,6 +1,71 @@
 (function() {
   var $timeout, FAILED_CLASS, LOADING_CLASS, SUCCESS_CLASS, createEventDirective, createStatusDirectie, eventAnimate, eventName, extendOptions, getAttributeConfig, getDirectiveName, isBoolean, j, k, len, len1, module, nextTick, onEnd, onStart, ref, ref1, t;
 
+  angular.isPromise = angular.isPromise || function(obj) {
+    return obj && angular.isFunction(obj.then);
+  };
+
+  isBoolean = function(value) {
+    return typeof value === 'boolean';
+  };
+
+  extendOptions = function(df) {
+    
+  var opt = angular.copy(df) || {}
+  for(var i = 1,ii = arguments.length; i < ii; i++){
+    var obj = arguments[i]
+    if(obj){
+      var keys = Object.keys(obj);
+      for (var j = 0, jj = keys.length; j < jj; j++) {
+        var key = keys[j]
+        var vl = obj[key]
+        if(angular.isObject(vl))
+          opt[key] = extendOptions(opt[key],vl)
+        else if(vl || isBoolean(vl) || angular.isNumber(vl))
+          opt[key] = vl
+      }
+    }
+  }
+  ;
+    return opt;
+  };
+
+  $timeout = null;
+
+  nextTick = function(callback, delay) {
+    if (callback && angular.isFunction(callback)) {
+      return $timeout(callback, delay || 0);
+    }
+  };
+
+  getAttributeConfig = function(attrs) {
+    var config, j, len, readStatus, ref, s;
+    config = {};
+    if (angular.isDefined(attrs['delay'])) {
+      config.delay = attrs['delay'];
+    }
+    readStatus = function(state) {
+      config[state] = {};
+      if (angular.isDefined(attrs[state])) {
+        return config[state].delay = attrs[state];
+      } else {
+        return config[state].delay = config.delay;
+      }
+    };
+    ref = ['success', 'failed', 'loading'];
+    for (j = 0, len = ref.length; j < len; j++) {
+      s = ref[j];
+      readStatus(s);
+    }
+    return config;
+  };
+
+  module = angular.module("ng-loading", ['ng']).run([
+    '$timeout', function($t) {
+      return $timeout = $t;
+    }
+  ]);
+
   module.controller("qPromiseCtrl", [
     'PromiseProxy', '$attrs', function(PromiseProxy, $attrs) {
       var config, emit, lastPromise, listener;
@@ -211,7 +276,11 @@
         }
       };
       this.get = function() {
-        return promiseCtrlList[0];
+        if (promiseCtrlList.length) {
+          return promiseCtrlList[promiseCtrlList.length - 1];
+        } else {
+          return null;
+        }
       };
       this.getConfig = function() {
         return config;
@@ -524,71 +593,6 @@
           return new PromiseProxy(tp, config);
         }
       };
-    }
-  ]);
-
-  angular.isPromise = angular.isPromise || function(obj) {
-    return obj && angular.isFunction(obj.then);
-  };
-
-  isBoolean = function(value) {
-    return typeof value === 'boolean';
-  };
-
-  extendOptions = function(df) {
-    
-  var opt = angular.copy(df) || {}
-  for(var i = 1,ii = arguments.length; i < ii; i++){
-    var obj = arguments[i]
-    if(obj){
-      var keys = Object.keys(obj);
-      for (var j = 0, jj = keys.length; j < jj; j++) {
-        var key = keys[j]
-        var vl = obj[key]
-        if(angular.isObject(vl))
-          opt[key] = extendOptions(opt[key],vl)
-        else if(vl || isBoolean(vl) || angular.isNumber(vl))
-          opt[key] = vl
-      }
-    }
-  }
-  ;
-    return opt;
-  };
-
-  $timeout = null;
-
-  nextTick = function(callback, delay) {
-    if (callback && angular.isFunction(callback)) {
-      return $timeout(callback, delay || 0);
-    }
-  };
-
-  getAttributeConfig = function(attrs) {
-    var config, k, len1, readStatus, ref1, s;
-    config = {};
-    if (angular.isDefined(attrs['delay'])) {
-      config.delay = attrs['delay'];
-    }
-    readStatus = function(state) {
-      config[state] = {};
-      if (angular.isDefined(attrs[state])) {
-        return config[state].delay = attrs[state];
-      } else {
-        return config[state].delay = config.delay;
-      }
-    };
-    ref1 = ['success', 'failed', 'loading'];
-    for (k = 0, len1 = ref1.length; k < len1; k++) {
-      s = ref1[k];
-      readStatus(s);
-    }
-    return config;
-  };
-
-  module = angular.module("ng-loading", ['ng']).run([
-    '$timeout', function($t) {
-      return $timeout = $t;
     }
   ]);
 
