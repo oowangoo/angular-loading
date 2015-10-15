@@ -44,7 +44,7 @@ module
       promiseCtrl.unAttend(fn)
 
   @get = ()->
-    return promiseCtrlList[0]
+    return if promiseCtrlList.length then promiseCtrlList[promiseCtrlList.length - 1] else null
   @getConfig = ()->
     return config;
   @setConfig = (cf)->
