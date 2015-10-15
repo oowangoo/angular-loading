@@ -10,7 +10,7 @@ module
     if arguments.length > 0 
       args = Array.prototype.slice.call(arguments);
     config = PromiseProxy.extendConfig(args)
-    console.log config
+    # console.log config
   @getConfig = ()->
     return config
   @get = ()->
