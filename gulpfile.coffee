@@ -62,6 +62,15 @@ gulp.task('connect',(done)->
     port:3000
   })
 )
-
+gulp.task("cleanRealese",()->
+  gulp.src('release/',{read:false}).pipe(clean())
+)
+gulp.task("release",['cleanRealese'],()->
+  gulp.src(['src/core/**/*'])
+  .pipe(concat("all.coffee"))
+  .pipe(coffee())
+  .on('error',gutil.log)
+  .pipe(gulp.dest("release/"))
+)
 gulp.task("build",['compass','coffee'])
 gulp.task("s",['build','watch','connect'])
