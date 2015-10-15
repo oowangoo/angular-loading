@@ -1,5 +1,5 @@
 (function() {
-  var $timeout, FAILED_CLASS, LOADING_CLASS, SUCCESS_CLASS, createEventDirective, createStatusDirectie, eventAnimate, eventName, extendOptions, getAttributeConfig, getDirectiveName, isBoolean, j, k, len, len1, module, nextTick, onEnd, onStart, ref, ref1, t;
+  var $timeout, FAILED_CLASS, LOADING_CLASS, SUCCESS_CLASS, createEventDirective, createStatusDirectie, eventAnimate, eventName, extendOptions, getAttributeConfig, getDirectiveName, isBoolean, j, k, len, len1, module, nextTick, nullGroupCtrl, onEnd, onStart, ref, ref1, t;
 
   angular.isPromise = angular.isPromise || function(obj) {
     return obj && angular.isFunction(obj.then);
@@ -218,6 +218,16 @@
     createEventDirective(eventName);
   }
 
+  nullGroupCtrl = {
+    register: angular.noop,
+    remove: angular.noop,
+    attend: angular.noop,
+    unAttend: angular.noop,
+    get: angular.noop,
+    getConfig: angular.noop,
+    setConfig: angular.noop
+  };
+
   module.controller("qGroupCtrl", [
     '$attrs', function($attrs) {
       var config, processQueue, promiseCtrlList, unAttendList;
@@ -313,11 +323,11 @@
         delay: 0
       };
       return {
-        require: ["qGroup", 'qInit'],
+        require: ["?qGroup", 'qInit'],
         controller: "qPromiseCtrl",
         link: function(scope, element, attrs, ctrls) {
           var excute, groupCtrl, promiseCtrl;
-          groupCtrl = ctrls[0];
+          groupCtrl = ctrls[0] || nullGroupCtrl;
           promiseCtrl = ctrls[1];
           promiseCtrl.setConfig(config);
           groupCtrl.register(promiseCtrl);
