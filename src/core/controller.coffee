@@ -28,6 +28,7 @@ module
     return lastPromise
   
   emit = (promiseProxy)->
+    return unless promiseProxy
     for l in listener
       l(promiseProxy)
 
