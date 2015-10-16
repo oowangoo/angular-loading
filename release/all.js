@@ -1,5 +1,5 @@
 (function() {
-  var $timeout, FAILED_CLASS, LOADING_CLASS, SUCCESS_CLASS, createEventDirective, createStatusDirectie, eventAnimate, eventName, extendOptions, getAttributeConfig, getDirectiveName, isBoolean, j, k, len, len1, module, nextTick, nullGroupCtrl, onEnd, onStart, ref, ref1, t;
+  var $timeout, FAILED_CLASS, LOADING_CLASS, Q_CLASS, SUCCESS_CLASS, createEventDirective, createStatusDirectie, eventAnimate, eventName, extendOptions, getAttributeConfig, getDirectiveName, isBoolean, j, k, len, len1, module, nextTick, nullGroupCtrl, onEnd, onStart, ref, ref1, t;
 
   angular.isPromise = angular.isPromise || function(obj) {
     return obj && angular.isFunction(obj.then);
@@ -42,12 +42,12 @@
     var config, j, len, readStatus, ref, s;
     config = {};
     if (angular.isDefined(attrs['delay'])) {
-      config.delay = attrs['delay'];
+      config.delay = parseInt(attrs['delay']);
     }
     readStatus = function(state) {
       config[state] = {};
       if (angular.isDefined(attrs[state])) {
-        return config[state].delay = attrs[state];
+        return config[state].delay = parseInt(attrs[state]);
       } else {
         return config[state].delay = config.delay;
       }
@@ -66,6 +66,14 @@
     }
   ]);
 
+  Q_CLASS = "q-promise";
+
+  LOADING_CLASS = 'q-loading';
+
+  SUCCESS_CLASS = 'q-success';
+
+  FAILED_CLASS = 'q-failed';
+
   module.controller("qPromiseCtrl", [
     'PromiseProxy', '$attrs', function(PromiseProxy, $attrs) {
       var config, emit, lastPromise, listener;
@@ -78,8 +86,7 @@
         if (arguments.length > 0) {
           args = Array.prototype.slice.call(arguments);
         }
-        config = PromiseProxy.extendConfig(args);
-        return console.log(config);
+        return config = PromiseProxy.extendConfig(args);
       };
       this.getConfig = function() {
         return config;
@@ -128,12 +135,6 @@
   module.constant("qEventConfig", {
     animate: true
   });
-
-  LOADING_CLASS = 'q-loading';
-
-  SUCCESS_CLASS = 'q-success';
-
-  FAILED_CLASS = 'q-failed';
 
   eventAnimate = function(proxy, element) {
     return proxy.loading(function() {
@@ -195,10 +196,15 @@
                   return;
                 }
                 proxy = qPromiseCtrl.push(pm);
+                proxy.loading(function() {
+                  return element.addClass(Q_CLASS);
+                });
                 if (isAnimate) {
                   eventAnimate(proxy, element);
                 }
-                return proxy["finally"](qPromiseCtrl.pop);
+                return proxy["finally"](qPromiseCtrl.pop)["finally"](function() {
+                  return element.removeClass(Q_CLASS);
+                });
               });
               return scope.$on("$destroy", function() {
                 if (qGroupCtrl) {
@@ -343,9 +349,9 @@
             }
             proxy = promiseCtrl.push(p);
             proxy.loading(function() {
-              return element.addClass("q-init");
+              return element.addClass("q-init").addClass(Q_CLASS);
             }).success(function() {
-              element.removeClass("q-init");
+              element.removeClass("q-init").removeClass(Q_CLASS);
               return groupCtrl.remove(promiseCtrl);
             })["finally"](promiseCtrl.pop);
           };
