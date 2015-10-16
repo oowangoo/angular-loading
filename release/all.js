@@ -525,13 +525,13 @@
             if (delay > 0) {
               return nextTick(function() {
                 self.$$state.isComplete = true;
-                self.$$state.status = 0;
+                self.$$state.status = self.$$state.status - 2;
                 self.$$state.value = rs;
                 return processQueue(self.$$state);
               }, delay);
             } else {
               self.$$state.isComplete = true;
-              self.$$state.status = 1;
+              self.$$state.status = self.$$state.status - 2;
               self.$$state.value = rs;
               return processQueue(self.$$state);
             }
