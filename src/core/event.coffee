@@ -59,9 +59,9 @@ createEventDirective = (eventName)->
             )
             if isAnimate
               eventAnimate(proxy,element)
-            proxy.finally(qPromiseCtrl.pop).finally(()->
+            proxy.finish(()->
               element.removeClass(Q_CLASS)
-            )
+            ).finally(qPromiseCtrl.pop)
           )
           scope.$on("$destroy",()->
             if qGroupCtrl
