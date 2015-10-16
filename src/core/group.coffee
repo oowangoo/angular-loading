@@ -95,11 +95,11 @@ module
           return ;
         proxy = promiseCtrl.push p 
         proxy.loading(()->
-          element.addClass("q-init")
+          element.addClass("q-init").addClass(Q_CLASS)
         ).success(()->
-          element.removeClass("q-init")
+          element.removeClass("q-init").removeClass(Q_CLASS)
           groupCtrl.remove(promiseCtrl)
-        ) .finally(promiseCtrl.pop)
+        ).finally(promiseCtrl.pop)
         return ;
       excute()
       

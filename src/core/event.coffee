@@ -3,9 +3,7 @@ module
   animate:true
 })
 
-LOADING_CLASS = 'q-loading'
-SUCCESS_CLASS = 'q-success'
-FAILED_CLASS = 'q-failed'
+
 
 eventAnimate = (proxy,element)->
   proxy.loading(()->
@@ -56,9 +54,14 @@ createEventDirective = (eventName)->
             return unless angular.isPromise(pm)
 
             proxy = qPromiseCtrl.push(pm)
+            proxy.loading(()->
+              element.addClass(Q_CLASS)
+            )
             if isAnimate
               eventAnimate(proxy,element)
-            proxy.finally(qPromiseCtrl.pop)
+            proxy.finally(qPromiseCtrl.pop).finally(()->
+              element.removeClass(Q_CLASS)
+            )
           )
           scope.$on("$destroy",()->
             if qGroupCtrl
