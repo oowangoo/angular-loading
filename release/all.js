@@ -102,9 +102,7 @@
       };
       this.push = function(promise) {
         lastPromise = PromiseProxy.$new(promise, config);
-        nextTick(function() {
-          return emit(lastPromise);
-        });
+        emit(lastPromise);
         return lastPromise;
       };
       emit = function(promiseProxy) {
@@ -479,7 +477,7 @@
           this.promise = this.deferred.promise;
           this.config = config;
           this.$$state = {};
-          this.$$state.status = 0;
+          this.$$state.status = -1;
           this.$$state.pending = [[], [], [], []];
           this.$$state.complete = [[], []];
           self = this;
