@@ -121,16 +121,18 @@ module.constant("qConfig",{
       ).finally(()->
         #set delay to call finish or unfinish
         delay = if rs then config.success.delay else config.failed.delay
+        #正常进入此处时status为2，或者3
+        #self.$$state.status = 0 #call finish ， = 1 call unfinish 
         if delay > 0
           nextTick(()->
             self.$$state.isComplete = true
-            self.$$state.status = 0 #call finish 
+            self.$$state.status = self.$$state.status - 2
             self.$$state.value = rs
             processQueue(self.$$state)
           ,delay)
         else 
           self.$$state.isComplete = true
-          self.$$state.status = 1 #call unfinish 
+          self.$$state.status = self.$$state.status - 2
           self.$$state.value = rs
           processQueue(self.$$state)
       )
