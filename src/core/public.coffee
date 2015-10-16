@@ -31,12 +31,12 @@ getAttributeConfig = (attrs)->
   config = {
   }
   if angular.isDefined(attrs['delay'])
-    config.delay = attrs['delay']
+    config.delay = parseInt(attrs['delay'])
 
   readStatus = (state)->
     config[state] = {}
     if angular.isDefined(attrs[state])
-      config[state].delay = attrs[state]
+      config[state].delay = parseInt(attrs[state])
     else 
       config[state].delay = config.delay
 
