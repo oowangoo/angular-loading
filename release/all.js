@@ -202,9 +202,9 @@
                 if (isAnimate) {
                   eventAnimate(proxy, element);
                 }
-                return proxy["finally"](qPromiseCtrl.pop)["finally"](function() {
+                return proxy.finish(function() {
                   return element.removeClass(Q_CLASS);
-                });
+                })["finally"](qPromiseCtrl.pop);
               });
               return scope.$on("$destroy", function() {
                 if (qGroupCtrl) {
