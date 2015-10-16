@@ -75,7 +75,7 @@ module.constant("qConfig",{
       # @promise = tp
       @config = config
       @$$state = {}
-      @$$state.status =  0 #@promise.$$state
+      @$$state.status =  -1 #@promise.$$state
 
       @$$state.pending = [[],[],[],[]]
       @$$state.complete = [[],[]]

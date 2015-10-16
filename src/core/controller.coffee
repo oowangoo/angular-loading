@@ -21,14 +21,10 @@ module
     return l
   @push = (promise)->
     lastPromise = PromiseProxy.$new(promise,config)
-    nextTick(()->
-      emit(lastPromise)
-    )
-    
+    emit(lastPromise)
     return lastPromise
   
   emit = (promiseProxy)->
-    return unless promiseProxy
     for l in listener
       l(promiseProxy)
 
