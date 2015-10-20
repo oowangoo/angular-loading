@@ -18,9 +18,28 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
   @$$parent.$$addGroupControl(@)
 
   groups = [] #childs
+
+
   controls = {
     '@':[]
   }
+
+  unAttendList = {'@':[] } # un attend list
+
+  addUnAttend = (name,callback)->
+    array = unAttendList[name] || []
+    array.push callback
+    unAttendList[name] = array
+    return
+  getAndRemoveUnAttend = (name)->
+    array = unAttendList[name]
+    unAttendList[name] = null
+    return array
+  removeUnAttend = (name,callback)->
+    array = unAttendList[name]
+    arrayRemove(array,callback)
+    return
+
   #private  
   @$$getControl = (name)->
     if name and name isnt '@'
@@ -46,8 +65,12 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
       controls[name] = control
     else 
       controls['@'].push control
-    return 
-  
+    callbacks = getAndRemoveUnAttend(name)
+    angular.forEach(callbacks,(v)->
+      control.attend(v)
+    )
+    return
+
   @$removeControl = (control)->
     name = control.$name
     
@@ -59,6 +82,7 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
 
     return 
   #public
+
   @attend:(name,callback)->
     if angular.isFunction(name)
       callback = name 
@@ -68,7 +92,11 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
 
     control = @$$getControl(name)
     #no control add list 
-    if control then control.attend(callback)
+    if control
+      control.attend(callback)
+    else
+      addUnAttend(name,callback)
+
     return control
 
   @unAttend:(name,callback)->
@@ -78,7 +106,10 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
     if !angular.isFunction(callback)
       return ;
     control = @$$getControl(name)
-    if control then control.unAttend(callback)
+    if control
+      control.unAttend(callback)
+    else
+      removeUnAttend(name,callback)
 
   self = @
   scope.$on("$destroy",()->
