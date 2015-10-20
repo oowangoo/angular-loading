@@ -3,7 +3,7 @@
 qCloakDirective = ()->
   require:"^qGroup"
   link:(scope,element,attrs,groupCtrl)->
-    forName = atts['qName']
+    forName = attrs['qName']
     onPromise = (promiseProxy)->
       promiseProxy.success(()->
         element.removeClass("q-cloak")
