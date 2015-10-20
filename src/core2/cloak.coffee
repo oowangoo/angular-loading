@@ -7,7 +7,7 @@ qCloakDirective = ()->
     onPromise = (promiseProxy)->
       promiseProxy.success(()->
         element.removeClass("q-cloak")
-        groupCtrl.unAttend(onPromise) #remove handle
+        groupCtrl.unAttend(forName,onPromise) #remove handle
       )
 
     groupCtrl.attend(forName,onPromise) #add handle
