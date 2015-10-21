@@ -83,7 +83,7 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
     return 
   #public
 
-  @attend:(name,callback)->
+  @attend=(name,callback)->
     if angular.isFunction(name)
       callback = name 
       name = null
@@ -99,7 +99,7 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
 
     return control
 
-  @unAttend:(name,callback)->
+  @unAttend=(name,callback)->
     if angular.isFunction(name)
       callback = name 
       name = null
@@ -120,6 +120,7 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
 
 qGroupDirective = [()->
   return {
-    name:'group'
-    controller:"GroupCtrl"
+  name: 'group'
+  controller: "GroupCtrl"
+  }
 ]
