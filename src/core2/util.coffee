@@ -2,7 +2,9 @@ angular.isPromise = angular.isPromise || (obj)->return obj && angular.isFunction
 
 isBoolean = ( value)->
   return typeof value is 'boolean';
-  
+
+
+
 nextTick = (callback,delay)->
   if callback and angular.isFunction(callback)
     $timeout(callback,delay||0)
