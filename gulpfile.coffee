@@ -20,20 +20,6 @@ gulp.task("compass",(done)->
   .pipe(connect.reload())
 )
 
-gulp.task("concat",()->
-  gulp.src(paths.coffee)
-  .pipe(concat("all.coffee"))
-  .pipe(gulp.dest(paths.tmp))
-)
-
-gulp.task("coffeeConcat",['concat'],()->
-  gulp.src(paths.tmp+"/all.coffee")
-  .pipe(coffee())
-  .on('error',gutil.log)
-  .pipe(gulp.dest(paths.tmp))
-  .pipe(connect.reload())
-)
-
 gulp.task("coffee",(done)->
   gulp.src(paths.coffee)
   .pipe(plumber())
@@ -62,15 +48,31 @@ gulp.task('connect',(done)->
     port:3000
   })
 )
-gulp.task("cleanRealese",()->
-  gulp.src('release/',{read:false}).pipe(clean())
-)
-gulp.task("release",['cleanRealese'],()->
-  gulp.src(['src/core/public.coffee','src/core/constant.coffee','src/core/*.coffee'])
-  .pipe(concat("all.coffee"))
-  .pipe(coffee())
-  .on('error',gutil.log)
-  .pipe(gulp.dest("release/"))
-)
+
 gulp.task("build",['compass','coffee'])
 gulp.task("s",['build','watch','connect'])
+
+
+
+gulp.task("release",()->
+  files = [
+    'src/core2/util.coffee'
+    'src/core2/proxy.coffee'
+    'src/core2/options.coffee'
+
+    'src/core2/group.coffee'
+    'src/core2/control.coffee'
+    'src/core2/event.coffee'
+    'src/core2/init.coffee'
+    'src/core2/status.coffee'
+
+    'src/core2/cloak.coffee'
+    'src/core2/public.coffee'
+  ]
+  gulp.src(files)
+  .pipe(plumber())
+  .pipe(concat("angular-loading.coffee"))
+  .pipe(coffee())
+  .on('error',gutil.log)
+  .pipe(gulp.dest(paths.tmp))
+)
