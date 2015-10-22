@@ -1,7 +1,8 @@
-angular.isPromise = angular.isPromise || (obj)->return obj && angular.isFunction(obj.then);
+angular.isPromise = angular.isPromise || (obj)->
+  return obj && angular.isFunction(obj.then)
 
 isBoolean = ( value)->
-  return typeof value is 'boolean';
+  return typeof value is 'boolean'
 
 
 
@@ -16,7 +17,7 @@ arrayRemove = (array, value)->
   return value
 
 getDirectiveName = (name,pre)->
-  unless pre 
+  unless pre
     pre = 'q'
   n = name[0].toUpperCase()
   name = name.substr(1)

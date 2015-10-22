@@ -1,17 +1,17 @@
 PromiseProxyService = ['$q','$exceptionHandler',($q,$exceptionHandler)->
   listenPromise = (promise,proxy)->
-    finallyFn = ()->
+    finallyFn = (delay)->
       proxy.$$state.isComplete = true
-      proxy.$$state.status = proxy.$$state.status - 2
+      proxy.$$state.status =  if delay >= 0 then 0 else 1
       proxy.$$state.value = resultStatus
       processQueue(proxy.$$state)
 
     config = proxy.config
 
     startTime = endTime = new Date()
-    timeline = 0;
+    timeline = 0
     promise.finally(()->
-      endTime = new Date();
+      endTime = new Date()
       timeline = endTime - startTime
     ).then(()->
       completePromise(proxy.deferred,true,config.success - timeline)
@@ -37,18 +37,18 @@ PromiseProxyService = ['$q','$exceptionHandler',($q,$exceptionHandler)->
       processQueue(proxy.$$state)
     ).finally(()->
       delay = if resultStatus then config['success'] else config['failed']
-      if delay > 0 
+      if delay > 0
         nextTick(finallyFn,delay)
-      else 
-        finallyFn()
+      else
+        finallyFn(delay)
     )
   makePromise = (deferred,resolved,value)->
     return unless deferred
-    if resolved 
+    if resolved
       deferred.resolve(value)
-    else 
+    else
       deferred.reject(value)
-    return 
+    return
   processQueue = ($$state)->
     value = $$state.value
     status = $$state.status
@@ -58,18 +58,18 @@ PromiseProxyService = ['$q','$exceptionHandler',($q,$exceptionHandler)->
       try
         value = fn(value)
       catch e
-        $exceptionHandler(e);
+        $exceptionHandler(e)
         # break;
     return ($$state.value = value)
 
   completePromise = (deferred,resolved,delay)->
-    if delay > 0 
+    if delay > 0
       nextTick(()->
         makePromise(deferred,resolved)
       ,delay)
-    else 
+    else
       makePromise(deferred,resolved)
-    return 
+    return
 
   class PromiseProxy
     constructor:(promise,config)->
@@ -79,18 +79,19 @@ PromiseProxyService = ['$q','$exceptionHandler',($q,$exceptionHandler)->
         pending:[[],[],[],[]]
         complete:[[],[]]
       }
-      @deferred = $q.defer();
+      @config = config
+      @deferred = $q.defer()
       @promise = @deferred.promise
       self = @
       nextTick(()->
-        listenPromise(promise,@)
+        listenPromise(promise,self)
       )
       return @
     then:(onLoading,onReady,onSuccess,onFailded)->
       for arg,i in arguments
         if i > 3
-          break; 
-        if arg 
+          break
+        if arg
           @$$state.pending[i].push(arg)
       if(!@$$state.isComplete and !(arguments.length < @$$state.status ) and (fn = arguments[@$$state.status]))
         nextTick(fn)
@@ -98,33 +99,33 @@ PromiseProxyService = ['$q','$exceptionHandler',($q,$exceptionHandler)->
     thenF:(onFinish,onUnFinish)->
       for arg,i in arguments
         if i > 2
-          break;
+          break
         if arg
           @$$state.complete[i].push arg
       if(@$$state.isComplete and !(arguments.length < @$$state.status ) and (fn = arguments[@$$state.status]))
         nextTick(fn)
       @
     #status is 0
-    loading:()->
+    loading:(fn)->
       @then(fn)
     #status is 1
-    ready:()->
+    ready:(fn)->
       @then(null,fn)
     #status is 2
-    success:()->
+    success:(fn)->
       @then(null,null,fn)
     #status is 3
-    failed:()->
+    failed:(fn)->
       @then(null,null,null,fn)
 
     #status is 1,isComplete is true
-    finish:()->
+    finish:(fn)->
       @thenF(fn)
     #status is 2,isComplete is true
-    unFinish:()->
+    unFinish:(fn)->
       @thenF(null,fn)
-    #status is 
-    "finally":()->
+    #status is
+    "finally":(fn)->
       @thenF(fn,fn)
       
   return PromiseProxy

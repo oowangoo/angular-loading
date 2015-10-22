@@ -6,16 +6,16 @@ createEventDirective = (name)->
     return {
       restrict: 'A'
       controller:"ControlCtrl"
-      require:['qOptions',directiveName]
+      require:['?^qOptions',directiveName]
       compile:(tElement,tAttrs)->
         fn = $parse(tAttrs[directiveName])
           
         return (scope, element, attrs,ctrls) ->
           lastPromise = null
 
-          qOptions = ctrls[0]
+          qOptions = if ctrls[0] and ctrls[0].$options then ctrls[0].$options else null
           control = ctrls[1]
-          control.setOption(qOptions)
+          control.setOption(qOptions.$options)
 
           onPromise = (promise)->
             lastPromise = proxy = control.handlePromise(promise)

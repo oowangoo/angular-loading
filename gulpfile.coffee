@@ -5,10 +5,11 @@ plumber = require("gulp-plumber")
 connect = require("gulp-connect")
 gutil = require("gulp-util")
 coffee = require("gulp-coffee")
+coffeelint = require('gulp-coffeelint');
 concat = require("gulp-concat")
 
 paths = {
-  coffee:"src/**/*.coffee"
+  coffee:"src/core2/*.coffee"
   compass:"src/style/**/*.scss"
   tmp:".tmp"
 }
@@ -21,6 +22,8 @@ gulp.task("compass",(done)->
 )
 
 gulp.task("coffee",(done)->
+ # .pipe(coffeelint())
+ # .pipe(coffeelint.reporter())
   gulp.src(paths.coffee)
   .pipe(plumber())
   .pipe(coffee({bare:true}))
@@ -29,7 +32,7 @@ gulp.task("coffee",(done)->
   .pipe(connect.reload())
 )
 
-gulp.task("cleanBuild",()->
+gulp.task("clean",()->
   gulp.src(paths.tmp,{read:false}).pipe(clean())
 )
 gulp.task("watch",['build'],()->

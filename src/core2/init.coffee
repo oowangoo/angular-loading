@@ -1,14 +1,17 @@
-qInitDirective = [()->
+qInitDirective = ['defaultOption',(defaultOption)->
+  dfInitOptions = angular.copy(defaultOption)
+  dfInitOptions.failed = -1
   return {
     restrict: 'A'
     controller:"ControlCtrl"
-    require:['qOptions','qInit']
+    require:['?^qInitOptions','qInit']
     link:(scope, element, attrs,ctrls)->
+      console.log 'q init'
       lastPromise = null
 
-      qOptions = ctrls[0]
+      options = if ctrls[0] and ctrls[0].$options then ctrls[0].$options else dfInitOptions
       control = ctrls[1]
-      control.setOption(qOptions)
+      control.setOption(options)
 
       onPromise = (promise)->
         lastPromise = proxy = control.handlePromise(promise)
@@ -19,12 +22,12 @@ qInitDirective = [()->
         ).finally(()->
           lastPromise = null
         )
-        return 
+        return
 
       excute = ()->
         return false if lastPromise
 
-        result = scope.$eval(attrs.qInit);
+        result = scope.$eval(attrs.qInit)
         unless angular.isPromise(result)
           return true
         onPromise(result)

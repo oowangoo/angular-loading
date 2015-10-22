@@ -11,8 +11,8 @@ nullGroupCtrl = {
 }
 
 GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
-
-  @$$parent = parentGroup = element.parent().controller("group") || nullGroupCtrl
+  console.log 'qGroupCtrl'
+  @$$parent = parentGroup = element.parent().controller("qGroup") || nullGroupCtrl
   @$name = attrs['qName']
 
   @$$parent.$$addGroupControl(@)
@@ -40,30 +40,30 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
     arrayRemove(array,callback)
     return
 
-  #private  
+  #private
   @$$getControl = (name)->
     if name and name isnt '@'
       control = controls[name]
       while @$$parent and !control
         control = @$$parent.$$getControl(name)
-    else 
-      control = controls[name] #array 
-      control = if control and control.length then control[control.length-1] else null;
+    else
+      control = controls['@'] #array
+      control = if control and control.length then control[control.length-1] else null
     return control
   @$$addGroupControl = (groupCtrl)->
     groups.push groupCtrl
-    return 
+    return
   @$$removeGroupControl = (groupCtrl)->
     arrayRemove(groups,groupCtrl)
-    return 
+    return
   #protected
   @$addControl = (control)->
     name = control.$name
-    if name 
+    if name
       if controls[name]
         throw new Error("same name control")
       controls[name] = control
-    else 
+    else
       controls['@'].push control
     callbacks = getAndRemoveUnAttend(name)
     angular.forEach(callbacks,(v)->
@@ -74,24 +74,24 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
   @$removeControl = (control)->
     name = control.$name
     
-    if name 
+    if name
       if controls[name]
         delete controls[name]
-    else 
+    else
       arrayRemove(controls['@'],control)
 
-    return 
+    return
   #public
 
   @attend=(name,callback)->
     if angular.isFunction(name)
-      callback = name 
+      callback = name
       name = null
     if !angular.isFunction(callback)
-      return ;
+      return
 
     control = @$$getControl(name)
-    #no control add list 
+    #no control add list
     if control
       control.attend(callback)
     else
@@ -101,10 +101,10 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
 
   @unAttend=(name,callback)->
     if angular.isFunction(name)
-      callback = name 
+      callback = name
       name = null
     if !angular.isFunction(callback)
-      return ;
+      return
     control = @$$getControl(name)
     if control
       control.unAttend(callback)
@@ -120,7 +120,7 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
 
 qGroupDirective = [()->
   return {
-  name: 'group'
+  name: 'qGroup'
   controller: "GroupCtrl"
   }
 ]

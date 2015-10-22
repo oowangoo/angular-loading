@@ -1,12 +1,13 @@
-# q-cloak directive like ng-cloak 
-# require qGroup 
+# q-cloak directive like ng-cloak
+# require qGroup
 qCloakDirective = ()->
   require:"^qGroup"
   link:(scope,element,attrs,groupCtrl)->
+    element.addClass("ng-cloak")
     forName = attrs['qName']
     onPromise = (promiseProxy)->
       promiseProxy.success(()->
-        element.removeClass("q-cloak")
+        element.removeClass("ng-cloak")
         groupCtrl.unAttend(forName,onPromise) #remove handle
       )
 

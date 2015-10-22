@@ -7,6 +7,7 @@ qStatusDirective = [()->
   controller:"qStatusCtrl"
   require:["^qGroup",'qStatus']
   link:(scope,element,attrs,ctrls)->
+    console.log 'asfasdf'
     forName = attrs['qFor']
 
     element.addClass("q-status")
@@ -25,30 +26,30 @@ qStatusDirective = [()->
         element.removeClass("ng-hide")
       
       selectedElements.length = 0
-      selectedScopes.length = 0 
-      if (selected = statusCtrl.cases[status] || statusCtrl.cases["Default"]) 
+      selectedScopes.length = 0
+      if (selected = statusCtrl.cases[status] || statusCtrl.cases["default"])
         for sel in selected
           sel.transclude((caseElement,selectedScope)->
             caseElement.addClass(status.toLowerCase())
-            selectedScopes.push(selectedScope);
+            selectedScopes.push(selectedScope)
             anchor = sel.element
             block = { clone: caseElement}
-            selectedElements.push(block);
+            selectedElements.push(block)
             anchor.after(caseElement)
           )
       
-      if selectedElements.length is 0 
+      if selectedElements.length is 0
         element.addClass("ng-hide")
 
     onPromise = (proxy)->
       proxy.loading(()->
-        changeStatus('Loading')
+        changeStatus('loading')
       ).ready().success(()->
-        changeStatus('Success')
+        changeStatus('success')
       ).failed(()->
-        changeStatus('Failed')
+        changeStatus('failed')
       ).finish(()->
-        changeStatus("Default")
+        changeStatus("default")
       )
 
     changeStatus("Default")
@@ -61,18 +62,19 @@ qStatusDirective = [()->
 
 qStatusDirectives = {}
 
-createStatusDirectie = (type)->
+createStatusDirective = (type)->
   directiveName = getDirectiveName(type,'qStatus')
   qStatusDirectives[directiveName] = ()->
     return {
-      restrict: 'AC'
+      restrict: 'A'
       require:"^qStatus"
       priority:1200
       transclude: 'element'
       link:(scope,element,attrs,statusCtrl,$transclude)->
         statusCtrl.cases[type] = statusCtrl.cases[type] || []
         statusCtrl.cases[type].push({ transclude: $transclude, element: element })
-        return ;
+        return
     }
+  return
 for t in ['success','failed','loading','default']
-  createStatusDirectie(t)
+  createStatusDirective(t)

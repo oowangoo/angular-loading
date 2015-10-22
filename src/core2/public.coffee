@@ -16,15 +16,20 @@ module = angular.module("ng-loading",['ng'])
 
 .controller("ControlCtrl",ControlCtrl)
 .controller("GroupCtrl",GroupCtrl)
+.controller("qStatusCtrl",qStatusCtrl)
 
-.directive("qCloakDirective",qCloakDirective)
-.directive("qGroupDirective",qGroupDirective)
-.directive("qInitDirective",qInitDirective)
-.directive("qOptionsDirective",qOptionsDirective)
-.directive("qStatusDirective",qStatusDirective)
+.directive("qCloak",qCloakDirective)
+.directive("qGroup",qGroupDirective)
+.directive("qInit",qInitDirective)
+.directive("qOptions",qOptionsDirective)
+.directive("qInitOptions",qInitOptionsDirective)
+.directive("qStatus",qStatusDirective)
 
-for dct,event of qEventDirectives
-  module.directive(event,dct)
+register = (name,direct)->
+  module.directive(name,direct)
 
-for dct,status of qStatusDirectives
-  module.directive(status,dct)
+for name,event of qEventDirectives
+  register(name,event)
+
+for name,ss of qStatusDirectives
+  register(name,ss)

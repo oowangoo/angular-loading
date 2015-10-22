@@ -4,29 +4,23 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title></title>
-  <style type="text/css" media="screen">
-    .btn-outside-group{
-      display: inline-block;
-    }
-    .q-status:empty{
-      display: none!important;
-    }
-  </style>
   <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <link rel="stylesheet" href="/style/button.css">
   <link rel="stylesheet" href="/style/demo.css">
-  <link rel="stylesheet" href="https://i.icomoon.io/public/temp/2605c25a08/UntitledProject/style.css">
-  
+
   <script src="/angular/angular.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core/public.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core/controller.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core/promise.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core/group.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core/event.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core/status.js" type="text/javascript" charset="utf-8"></script>
 
-
-  <script src="/button/module.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/util.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/proxy.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/options.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/group.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/control.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/event.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/init.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/status.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/cloak.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/public.js" type="text/javascript" charset="utf-8"></script>
+  
 </head>
 <body ng-controller="demoCtrl">
 
@@ -36,19 +30,21 @@
   </div> -->
 
 
-  <div q-init="btnC()" q-group >
-    <div class="q-status" >
-      <i q-status-loading class="icon-spinner9"> </i>
+  <div q-init="btnC()" q-group ng-cloak>
+    <div q-status >
+      <h3 q-status-loading>loading</h3>
+      <h3 q-status-failed> failed</h3>
     </div>
-    <div class="q-cloak">
+    <div class="" q-cloak>
       xxxxxxxx
     </div>
   </div>
 
   <script type="text/javascript" charset="utf-8">
-  angular.module('demo',['ng','ng-loading','q-button']).controller('demoCtrl', ['$q','$scope','$timeout',function ($q,$scope,$timeout) {
+  angular.module('demo',['ng','ng-loading']).controller('demoCtrl', ['$q','$scope','$timeout','PromiseProxy',function ($q,$scope,$timeout,PromiseProxy) {
       var i = 0;
       function makePromise(deferred,resolve,value){
+        console.log('make promise',resolve)
         if (resolve)
           deferred.resolve(value)
         else 
@@ -58,15 +54,14 @@
         var deferred = $q.defer()
         var promise = deferred.promise
         i = (i%2) + 1;
-        console.log(i);
         if(i%2 === 0 ){
           $timeout(function(){
             makePromise(deferred,true)
-          },10000)
+          },5000)
         }else {
           $timeout(function(){
             makePromise(deferred,false)
-          },10000)
+          },5000)
         }
         return promise
       }

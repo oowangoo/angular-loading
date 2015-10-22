@@ -1,12 +1,10 @@
 defaultOption = {
-  $options:{
-    loading:0
-    success:0
-    failed:0
-    animate:true
-  }
+  loading:0
+  success:0
+  failed:0
+  animate:true
 }
-qOptionsDirective = ['defaultOption',(defaultOption)->
+qInitOptionsDirective = qOptionsDirective = ['defaultOption',(defaultOption)->
   return {
     restrict: 'A',
     controller:['$scope','$attrs',($scope,$attrs)->
@@ -16,6 +14,6 @@ qOptionsDirective = ['defaultOption',(defaultOption)->
           @$options[s] = @$options['delay'] || 0
       unless @$options.animate
         @$options.animate = defaultOption.$options.animate
-    ] 
+    ]
   }
 ]
