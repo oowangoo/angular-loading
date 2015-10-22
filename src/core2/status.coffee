@@ -7,7 +7,6 @@ qStatusDirective = [()->
   controller:"qStatusCtrl"
   require:["^qGroup",'qStatus']
   link:(scope,element,attrs,ctrls)->
-    console.log 'asfasdf'
     forName = attrs['qFor']
 
     element.addClass("q-status")

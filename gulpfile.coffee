@@ -9,7 +9,7 @@ coffeelint = require('gulp-coffeelint');
 concat = require("gulp-concat")
 
 paths = {
-  coffee:"src/core2/*.coffee"
+  coffee:"src/**/*.coffee"
   compass:"src/style/**/*.scss"
   tmp:".tmp"
 }

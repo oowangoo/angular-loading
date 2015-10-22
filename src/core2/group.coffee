@@ -11,7 +11,6 @@ nullGroupCtrl = {
 }
 
 GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
-  console.log 'qGroupCtrl'
   @$$parent = parentGroup = element.parent().controller("qGroup") || nullGroupCtrl
   @$name = attrs['qName']
 
@@ -121,6 +120,7 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
 qGroupDirective = [()->
   return {
   name: 'qGroup'
+  priority:1300
   controller: "GroupCtrl"
   }
 ]

@@ -10,27 +10,41 @@
 
   <script src="/angular/angular.js" type="text/javascript" charset="utf-8"></script>
 
-  <script src="/util.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/proxy.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/options.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/group.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/control.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/event.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/init.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/status.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/cloak.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/public.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core2/util.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core2/proxy.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core2/options.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core2/group.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core2/control.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core2/event.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core2/init.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core2/status.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core2/cloak.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core2/public.js" type="text/javascript" charset="utf-8"></script>
   
 </head>
 <body ng-controller="demoCtrl">
 
-<!--   <button type="button" class="btn btn-inside" q-click="btnC()">inside btn </button>
+  <button type="button" class="btn btn-inside" q-click="btnC()" q-group>
+    inside btn
+    <span q-status>
+      <span q-status-loading>loading</span>
+      <span q-status-success>success</span>
+      <span q-status-failed>failed</span>
+    </span>
+  </button>
   <div class="btn-outside-group">
-    <button type="button" class="btn" q-click="btnC()">outside btn group</button>
-  </div> -->
+    <button type="button" class="btn" q-click="btnC()" q-group q-options="{failed:-1,success:-1}">
+      outside btn group
+      <span q-status>
+        <span q-status-loading>loading</span>
+        <span q-status-success>success</span>
+        <span q-status-failed>failed</span>
+     </span>
+    </button>
+  </div>
 
 
-  <div q-init="btnC()" q-group ng-cloak>
+  <div b-init="btnC()" q-group ng-cloak>
     <div q-status >
       <h3 q-status-loading>loading</h3>
       <h3 q-status-failed> failed</h3>
@@ -42,7 +56,7 @@
 
   <script type="text/javascript" charset="utf-8">
   angular.module('demo',['ng','ng-loading']).controller('demoCtrl', ['$q','$scope','$timeout','PromiseProxy',function ($q,$scope,$timeout,PromiseProxy) {
-      var i = 0;
+      var i = 1;
       function makePromise(deferred,resolve,value){
         console.log('make promise',resolve)
         if (resolve)
@@ -51,6 +65,7 @@
           deferred.reject(value)
       }
       $scope.btnC = function(){
+        console.log(i);
         var deferred = $q.defer()
         var promise = deferred.promise
         i = (i%2) + 1;

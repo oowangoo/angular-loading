@@ -9,7 +9,7 @@ ControlCtrl = [
     @$name = attrs['qName']
     @$options = defaultOption
 
-    groupCtrl = element.controller('qGroup') or element.parent().controller('group') or nullGroupCtrl
+    groupCtrl = element.controller('qGroup') or element.parent().controller('qGroup') or nullGroupCtrl
     
     groupCtrl.$addControl(@)
 
@@ -34,7 +34,8 @@ ControlCtrl = [
       )
     @setOption = (option)->
       if option
-        @$options = option
+        @$options = angular.extend({},defaultOption,option)
+        console.log @$options
 
     @attend = (fn)->
       if angular.isFunction fn

@@ -1,7 +1,7 @@
 qEventDirectives = {}
 
 createEventDirective = (name)->
-  directiveName = getDirectiveName(eventName)
+  directiveName = getDirectiveName(name)
   qEventDirectives[directiveName] = ['$parse',($parse)->
     return {
       restrict: 'A'
@@ -15,7 +15,7 @@ createEventDirective = (name)->
 
           qOptions = if ctrls[0] and ctrls[0].$options then ctrls[0].$options else null
           control = ctrls[1]
-          control.setOption(qOptions.$options)
+          control.setOption(qOptions)
 
           onPromise = (promise)->
             lastPromise = proxy = control.handlePromise(promise)
@@ -26,7 +26,6 @@ createEventDirective = (name)->
             ).finally(()->
               lastPromise = null
             )
-            eventAnimate(proxy)
             return proxy;
 
           excute = ()->
@@ -41,7 +40,8 @@ createEventDirective = (name)->
             onPromise(eventResult)
             return true
 
-          element.on(eventName,excute)
+          element.on(name,excute)
+          return
 
     }
   ]

@@ -13,7 +13,7 @@ qInitOptionsDirective = qOptionsDirective = ['defaultOption',(defaultOption)->
         unless @$options[s]
           @$options[s] = @$options['delay'] || 0
       unless @$options.animate
-        @$options.animate = defaultOption.$options.animate
+        @$options.animate = defaultOption.animate
     ]
   }
 ]
