@@ -38,7 +38,9 @@ PromiseProxyService = ['$q','$exceptionHandler',($q,$exceptionHandler)->
     ).finally(()->
       delay = if resultStatus then config['success'] else config['failed']
       if delay > 0
-        nextTick(finallyFn,delay)
+        nextTick(()->
+          finallyFn(delay)
+        ,delay)
       else
         finallyFn(delay)
     )
