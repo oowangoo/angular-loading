@@ -43,8 +43,12 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
   @$$getControl = (name)->
     if name and name isnt '@'
       control = controls[name]
-      while @$$parent and !control
+      if !control
         control = @$$parent.$$getControl(name)
+      if !control
+        console.log 'call child to find'
+        for g in groups
+          control = g.$$getControl(name)
     else
       control = controls['@'] #array
       control = if control and control.length then control[control.length-1] else null
