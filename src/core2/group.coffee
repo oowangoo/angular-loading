@@ -40,14 +40,16 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
     return
 
   #private
-  @$$getControl = (name)->
+  @$$getControl = (name,exclude)->
     if name and name isnt '@'
       control = controls[name]
       if !control
-        control = @$$parent.$$getControl(name)
+        control = @$$parent.$$getControl(name,@)
       if !control
         console.log 'call child to find'
         for g in groups
+          if g is exclude
+            continue
           control = g.$$getControl(name)
     else
       control = controls['@'] #array
