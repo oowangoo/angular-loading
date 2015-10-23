@@ -91,12 +91,14 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
   #public
 
   @attend=(name,callback)->
+    if name is '@'
+      throw new Error('q control name can\'t be @' )
     if angular.isFunction(name)
       callback = name
       name = null
     if !angular.isFunction(callback)
       return
-
+    name = name || '@'
     control = @$$getControl(name)
     #no control add list
     if control
@@ -112,6 +114,7 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
       name = null
     if !angular.isFunction(callback)
       return
+    name = name || '@'
     control = @$$getControl(name)
     if control
       control.unAttend(callback)
