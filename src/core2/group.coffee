@@ -1,4 +1,5 @@
 nullGroupCtrl = {
+  $$id : 0  #调试用属性
   $$getControl:angular.noop
   $$addGroupControl:angular.noop
   $$removeGroupControl:angular.noop
@@ -9,8 +10,9 @@ nullGroupCtrl = {
   attend:angular.noop
   unAttend:angular.noop
 }
-
+groupId = 1
 GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
+  @$$id = groupId++
   @$$parent = parentGroup = element.parent().controller("qGroup") || nullGroupCtrl
   @$name = attrs['qName']
 
@@ -46,7 +48,6 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
       if !control
         control = @$$parent.$$getControl(name,@)
       if !control
-        console.log 'call child to find'
         for g in groups
           if g is exclude
             continue
