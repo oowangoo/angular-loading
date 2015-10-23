@@ -5,6 +5,7 @@ plumber = require("gulp-plumber")
 connect = require("gulp-connect")
 gutil = require("gulp-util")
 coffee = require("gulp-coffee")
+coffeelint = require('gulp-coffeelint');
 concat = require("gulp-concat")
 
 paths = {
@@ -20,21 +21,9 @@ gulp.task("compass",(done)->
   .pipe(connect.reload())
 )
 
-gulp.task("concat",()->
-  gulp.src(paths.coffee)
-  .pipe(concat("all.coffee"))
-  .pipe(gulp.dest(paths.tmp))
-)
-
-gulp.task("coffeeConcat",['concat'],()->
-  gulp.src(paths.tmp+"/all.coffee")
-  .pipe(coffee())
-  .on('error',gutil.log)
-  .pipe(gulp.dest(paths.tmp))
-  .pipe(connect.reload())
-)
-
 gulp.task("coffee",(done)->
+ # .pipe(coffeelint())
+ # .pipe(coffeelint.reporter())
   gulp.src(paths.coffee)
   .pipe(plumber())
   .pipe(coffee({bare:true}))
@@ -43,7 +32,7 @@ gulp.task("coffee",(done)->
   .pipe(connect.reload())
 )
 
-gulp.task("cleanBuild",()->
+gulp.task("clean",()->
   gulp.src(paths.tmp,{read:false}).pipe(clean())
 )
 gulp.task("watch",['build'],()->
@@ -62,15 +51,31 @@ gulp.task('connect',(done)->
     port:3000
   })
 )
-gulp.task("cleanRealese",()->
-  gulp.src('release/',{read:false}).pipe(clean())
-)
-gulp.task("release",['cleanRealese'],()->
-  gulp.src(['src/core/public.coffee','src/core/constant.coffee','src/core/*.coffee'])
-  .pipe(concat("all.coffee"))
+
+gulp.task("build",['compass','coffee'])
+gulp.task("s",['build','watch','connect'])
+
+
+
+gulp.task("release",()->
+  files = [
+    'src/core/util.coffee'
+    'src/core/proxy.coffee'
+    'src/core/options.coffee'
+
+    'src/core/group.coffee'
+    'src/core/control.coffee'
+    'src/core/event.coffee'
+    'src/core/init.coffee'
+    'src/core/status.coffee'
+
+    'src/core/cloak.coffee'
+    'src/core/public.coffee'
+  ]
+  gulp.src(files)
+  .pipe(plumber())
+  .pipe(concat("angular-loading.coffee"))
   .pipe(coffee())
   .on('error',gutil.log)
   .pipe(gulp.dest("release/"))
 )
-gulp.task("build",['compass','coffee'])
-gulp.task("s",['build','watch','connect'])

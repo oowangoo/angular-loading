@@ -1,132 +1,133 @@
 nullGroupCtrl = {
-  register:angular.noop
-  remove:angular.noop
+  $$id : 0  #调试用属性
+  $$getControl:angular.noop
+  $$addGroupControl:angular.noop
+  $$removeGroupControl:angular.noop
+
+  $addControl : angular.noop
+  $removeControl: angular.noop
+
   attend:angular.noop
   unAttend:angular.noop
-  get:angular.noop
-  getConfig:angular.noop
-  setConfig:angular.noop
 }
-module
-.controller("qGroupCtrl",['$attrs',($attrs)->
-  promiseCtrlList = []
-  config = getAttributeConfig($attrs)
-  unAttendList = []
+groupId = 1
+GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
+  @$$id = groupId++
+  @$$parent = parentGroup = element.parent().controller("qGroup") || nullGroupCtrl
+  @$name = attrs['qName']
 
-  processQueue = (promiseCtrl)->
-    temp = []
-    for atd in unAttendList
-      ctrl = atd.ctrl
-      fn = atd.callback
-      if !ctrl or ctrl is promiseCtrl
-        promiseCtrl.attend(fn)
-      else 
-        temp.push atd
-    unAttendList = temp
+  @$$parent.$$addGroupControl(@)
 
-  @register = (qPromiseCtrl)->
-    # qPromiseCtrl.setConfig(config)
-    promiseCtrlList.push qPromiseCtrl
-    processQueue(qPromiseCtrl)
+  groups = [] #childs
 
-  @remove = (ctrl)->
-    r = null
-    i = promiseCtrlList.indexOf(ctrl)
-    #remove this node
-    if i > -1 
-      r = promiseCtrlList.splice(i,1)
-    return r ;
-  
-  @attend = ( promiseCtrl,fn)->
-    unless fn
-      fn =  promiseCtrl
-      promiseCtrl = @get()
-    if promiseCtrl #maybe find ctrl by name
-      promiseCtrl.attend(fn)
-    else 
-      unAttendList.push({ctrl:promiseCtrl,callback:fn})
-  @unAttend = ( promiseCtrl,fn)->
-    unless fn
-      fn =  promiseCtrl
-      promiseCtrl = @get()
-    if promiseCtrl #maybe find ctrl by name
-      promiseCtrl.unAttend(fn)
 
-  @get = ()->
-    return if promiseCtrlList.length then promiseCtrlList[promiseCtrlList.length - 1] else null
-  @getConfig = ()->
-    return config;
-  @setConfig = (cf)->
-    config = cf
-  @
-])
-.directive("qGroup",[()->
-  return {
-    restrict: 'AC'
-    require:"qGroup"
-    controller:"qGroupCtrl"
-    compile:(tElement,tAttrs)->
-      #get attr config setting
-      return (scope, element, attrs,qGroupCtrl) ->
-        scope.qGroupCtrl = qGroupCtrl
+  controls = {
+    '@':[]
   }
-])
-.directive("qInit",[()->
-  config = {
-    failed:{
-      delay:-1
-    }
-    delay:0
-  }
-  return {
-    require:["?qGroup",'qInit']
-    controller:"qPromiseCtrl"
-    link:(scope,element,attrs,ctrls)->
-      groupCtrl = ctrls[0] || nullGroupCtrl
-      promiseCtrl = ctrls[1]
-      promiseCtrl.setConfig(config)
-      groupCtrl.register promiseCtrl
 
-      excute = ()->
-        return if promiseCtrl.get()
-        p = scope.$eval(attrs.qInit);
-        unless angular.isPromise(p) 
-          groupCtrl.remove(promiseCtrl)      
-          return ;
-        proxy = promiseCtrl.push p 
-        proxy.loading(()->
-          element.addClass("q-init").addClass(Q_CLASS)
-        ).success(()->
-          element.removeClass("q-init").removeClass(Q_CLASS)
-          groupCtrl.remove(promiseCtrl)
-        ).finally(promiseCtrl.pop)
-        return ;
-      excute()
-      
-      promiseCtrl.retry = excute
-      return ;
+  unAttendList = {'@':[] } # un attend list
 
-  }
-])
-.directive("qRetry",[()->
-  restrict:"A"
-  require:"^qInit"
-  priority:5
-  link:(scope,element,attrs,qInitCtrl)->
-    element.on('click',()->
-      qInitCtrl.retry()
-      return ;
+  addUnAttend = (name,callback)->
+    array = unAttendList[name] || []
+    array.push callback
+    unAttendList[name] = array
+    return
+  getAndRemoveUnAttend = (name)->
+    array = unAttendList[name]
+    unAttendList[name] = null
+    return array
+  removeUnAttend = (name,callback)->
+    array = unAttendList[name]
+    arrayRemove(array,callback)
+    return
+
+  #private
+  @$$getControl = (name,exclude)->
+    if name and name isnt '@'
+      control = controls[name]
+      if !control
+        control = @$$parent.$$getControl(name,@)
+      if !control
+        for g in groups
+          if g is exclude
+            continue
+          control = g.$$getControl(name)
+    else
+      control = controls['@'] #array
+      control = if control and control.length then control[control.length-1] else null
+    return control
+  @$$addGroupControl = (groupCtrl)->
+    groups.push groupCtrl
+    return
+  @$$removeGroupControl = (groupCtrl)->
+    arrayRemove(groups,groupCtrl)
+    return
+  #protected
+  @$addControl = (control)->
+    name = control.$name
+    if name
+      if controls[name]
+        throw new Error("same name control")
+      controls[name] = control
+    else
+      controls['@'].push control
+    callbacks = getAndRemoveUnAttend(name)
+    angular.forEach(callbacks,(v)->
+      control.attend(v)
     )
-    return ;
-])
-.directive("qCloak",[()->
-  restrict:"C"
-  require:"^qGroup"
-  link:(scope,element,attrs,groupCtrl)->
+    return
 
-    groupCtrl.attend((promiseProxy)->
-      promiseProxy.success(()->
-        element.removeClass("q-cloak")
-      )
-    )
-])
+  @$removeControl = (control)->
+    name = control.$name
+    
+    if name
+      if controls[name]
+        delete controls[name]
+    else
+      arrayRemove(controls['@'],control)
+
+    return
+  #public
+
+  @attend=(name,callback)->
+    if angular.isFunction(name)
+      callback = name
+      name = null
+    if !angular.isFunction(callback)
+      return
+
+    control = @$$getControl(name)
+    #no control add list
+    if control
+      control.attend(callback)
+    else
+      addUnAttend(name,callback)
+
+    return control
+
+  @unAttend=(name,callback)->
+    if angular.isFunction(name)
+      callback = name
+      name = null
+    if !angular.isFunction(callback)
+      return
+    control = @$$getControl(name)
+    if control
+      control.unAttend(callback)
+    else
+      removeUnAttend(name,callback)
+
+  self = @
+  scope.$on("$destroy",()->
+    self.$$parent.$$removeGroupControl(self)
+  )
+  return @
+]
+
+qGroupDirective = [()->
+  return {
+  name: 'qGroup'
+  priority:1300
+  controller: "GroupCtrl"
+  }
+]

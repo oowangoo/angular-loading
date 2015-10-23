@@ -1,14 +1,14 @@
-
-module.controller("qStatusCtrl",()->
+qStatusCtrl = ()->
   @cases = {}
   return @
-)
-#like ngSwitch
-module.directive('qStatus',[()->
+
+qStatusDirective = [()->
   restrict: 'EA'
   controller:"qStatusCtrl"
   require:["^qGroup",'qStatus']
   link:(scope,element,attrs,ctrls)->
+    forName = attrs['qFor']
+
     element.addClass("q-status")
     groupCtrl = ctrls[0]
     statusCtrl = ctrls[1]
@@ -25,118 +25,55 @@ module.directive('qStatus',[()->
         element.removeClass("ng-hide")
       
       selectedElements.length = 0
-      selectedScopes.length = 0 
-      if (selected = statusCtrl.cases[status] || statusCtrl.cases["Default"]) 
+      selectedScopes.length = 0
+      if (selected = statusCtrl.cases[status] || statusCtrl.cases["default"])
         for sel in selected
           sel.transclude((caseElement,selectedScope)->
             caseElement.addClass(status.toLowerCase())
-            selectedScopes.push(selectedScope);
+            selectedScopes.push(selectedScope)
             anchor = sel.element
             block = { clone: caseElement}
-            selectedElements.push(block);
+            selectedElements.push(block)
             anchor.after(caseElement)
           )
       
-      if selectedElements.length is 0 
+      if selectedElements.length is 0
         element.addClass("ng-hide")
 
-    onPromise = (promiseProxy)->
-      promiseProxy.loading(()->
-        changeStatus('Loading')
+    onPromise = (proxy)->
+      proxy.loading(()->
+        changeStatus('loading')
       ).ready().success(()->
-        changeStatus('Success')
+        changeStatus('success')
       ).failed(()->
-        changeStatus('Failed')
+        changeStatus('failed')
       ).finish(()->
-        changeStatus("Default")
+        changeStatus("default")
       )
+
     changeStatus("Default")
-    groupCtrl.attend(onPromise)
+  
+    groupCtrl.attend(forName,onPromise)
     scope.$on("$destroy",()->
-      groupCtrl.unAttend(onPromise)
+      groupCtrl.unAttend(forName,onPromise)
     )
-])
-onStart = (element,cls,rmCls)->
-  if cls then element.addClass(cls)
-  if rmCls then element.removeClass(rmCls)
-  return ;
-onEnd = (element,cls,rmCls)->
-  if cls then element.removeClass(cls)
-  if rmCls then element.addClass(rmCls)
-  return ;
-createStatusDirectie = (type)->
-  directiveName = "qStatus#{type}"
-  lowerType = type.toLowerCase()
-  # like ngSwitchWhen
-  module.directive(directiveName,[()->
+]
+
+qStatusDirectives = {}
+
+createStatusDirective = (type)->
+  directiveName = getDirectiveName(type,'qStatus')
+  qStatusDirectives[directiveName] = ()->
     return {
-      restrict: 'AC'
+      restrict: 'A'
       require:"^qStatus"
       priority:1200
       transclude: 'element'
       link:(scope,element,attrs,statusCtrl,$transclude)->
         statusCtrl.cases[type] = statusCtrl.cases[type] || []
         statusCtrl.cases[type].push({ transclude: $transclude, element: element })
-        # element.remove()
-        return ;
+        return
     }
-  ])
-for t in ['Success','Failed','Loading','Default']
-  createStatusDirectie(t)
-
-# add class or remove class
-# module.directive(directiveName,[()->
-#   return { 
-#     restrict: 'A'
-#     require:"^qGroup"
-#     priority:1
-#     compile:(tElement,tAttr)->
-#       cls = tAttr[directiveName] || tAttr['addClass']
-#       rmCls = tAttr["rmClass"]
-#       return (scope,element,attrs,groupCtrl)->
-        
-#         return if !cls and !rmCls
-
-#         onPromise = (promiseProxy)->
-#           promiseProxy[lowerType](()->
-#             onStart(element,cls,rmCls)
-#           )
-#           if type is 'Loading'
-#             mn = 'ready'
-#           else 
-#             mn = 'finish'
-#           promiseProxy[mn](()->
-#             onEnd(element,cls,rmCls)
-#           )
-
-#         groupCtrl.attend(onPromise)
-#         scope.$on("$destroy",()->
-#           groupCtrl.unAttend(onPromise)
-#         )
-#   }
-# ])
-# module.directive('qStatus',[()->
-#     return { 
-#       restrict: 'A'
-#       require:"^qGroup"
-#       priority:2
-#       compile:(tElement,tAttr)->
-#         cls = tAttr["qStatusSuccess"] || tAttr["qStatusFailded"] || tAttr["addClass"]
-#         rmCls = null
-#         return (scope,element,attrs,groupCtrl)->
-          
-#           return if !cls and !rmCls
-
-#           onPromise = (promiseProxy)->
-#             promiseProxy.loading(()->
-#               onEnd(element,cls,rmCls)
-#             ).finish(()->
-#               onStart(element,cls,rmCls)
-#             )
-#           onStart(element,cls,rmCls)
-#           groupCtrl.attend(onPromise)
-#           scope.$on("$destroy",()->
-#             groupCtrl.unAttend(onPromise)
-#           )
-#     }
-#   ])
+  return
+for t in ['success','failed','loading','default']
+  createStatusDirective(t)
