@@ -10,21 +10,21 @@
 
   <script src="/angular/angular.js" type="text/javascript" charset="utf-8"></script>
 
-  <script src="/core2/util.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core2/proxy.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core2/options.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core2/group.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core2/control.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core2/event.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core2/init.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core2/status.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core2/cloak.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/core2/public.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core/util.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core/proxy.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core/options.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core/group.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core/control.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core/event.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core/init.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core/status.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core/cloak.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/core/public.js" type="text/javascript" charset="utf-8"></script>
   
 </head>
 <body ng-controller="demoCtrl">
 
-  <!-- <button type="button" class="btn btn-inside" q-click="btnC()" q-group>
+  <button type="button" class="btn btn-inside" q-click="btnC()" q-group>
     inside btn
     <span q-status>
       <span q-status-loading>loading</span>
@@ -52,10 +52,10 @@
     <div class="" q-cloak>
       xxxxxxxx
     </div>
-  </div> -->
+  </div>
   <div q-group>
      <button type="button" class="btn" q-click="btnC()" q-group q-name="demoButton1" q-options="{success:1000,failed:1000}">button</button>
-     <span q-status q-for="demoButton1" ng-cloak>
+     <span q-status q-for="demoButton2" ng-cloak>
         <span q-status-loading>loading</span>
         <span q-status-success>success</span>
         <span q-status-failed>failed</span>
