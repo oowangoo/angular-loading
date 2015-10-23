@@ -70,7 +70,8 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
         throw new Error("same name control")
       controls[name] = control
     else
-      controls['@'].push control
+      name = '@'
+      controls[name].push control
     callbacks = getAndRemoveUnAttend(name)
     angular.forEach(callbacks,(v)->
       control.attend(v)
