@@ -59,23 +59,23 @@ gulp.task("s",['build','watch','connect'])
 
 gulp.task("release",()->
   files = [
-    'src/core2/util.coffee'
-    'src/core2/proxy.coffee'
-    'src/core2/options.coffee'
+    'src/core/util.coffee'
+    'src/core/proxy.coffee'
+    'src/core/options.coffee'
 
-    'src/core2/group.coffee'
-    'src/core2/control.coffee'
-    'src/core2/event.coffee'
-    'src/core2/init.coffee'
-    'src/core2/status.coffee'
+    'src/core/group.coffee'
+    'src/core/control.coffee'
+    'src/core/event.coffee'
+    'src/core/init.coffee'
+    'src/core/status.coffee'
 
-    'src/core2/cloak.coffee'
-    'src/core2/public.coffee'
+    'src/core/cloak.coffee'
+    'src/core/public.coffee'
   ]
   gulp.src(files)
   .pipe(plumber())
   .pipe(concat("angular-loading.coffee"))
   .pipe(coffee())
   .on('error',gutil.log)
-  .pipe(gulp.dest(paths.tmp))
+  .pipe(gulp.dest("release/"))
 )
