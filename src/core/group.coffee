@@ -38,6 +38,7 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
     return array
   removeUnAttend = (name,callback)->
     array = unAttendList[name]
+    return unless array
     arrayRemove(array,callback)
     return
 
@@ -116,6 +117,7 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
       return
     name = name || '@'
     control = @$$getControl(name)
+    # 如果control先调用removeControl，此处会找不到control
     if control
       control.unAttend(callback)
     else
