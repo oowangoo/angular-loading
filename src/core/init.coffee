@@ -4,6 +4,7 @@ qInitDirective = ['defaultOption',(defaultOption)->
   return {
     restrict: 'A'
     controller:"ControlCtrl"
+    priority:1000
     require:['?^qInitOptions','qInit']
     link:(scope, element, attrs,ctrls)->
       console.log 'q init'
