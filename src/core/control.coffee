@@ -35,7 +35,7 @@ ControlCtrl = [
     @setOption = (option)->
       if option
         @$options = angular.extend({},defaultOption,option)
-        console.log @$options
+        # console.log @$options
 
     @attend = (fn)->
       if angular.isFunction fn

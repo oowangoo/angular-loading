@@ -38,6 +38,7 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
     return array
   removeUnAttend = (name,callback)->
     array = unAttendList[name]
+    return unless array
     arrayRemove(array,callback)
     return
 
@@ -70,7 +71,8 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
         throw new Error("same name control")
       controls[name] = control
     else
-      controls['@'].push control
+      name = '@'
+      controls[name].push control
     callbacks = getAndRemoveUnAttend(name)
     angular.forEach(callbacks,(v)->
       control.attend(v)
@@ -90,12 +92,14 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
   #public
 
   @attend=(name,callback)->
+    if name is '@'
+      throw new Error('q control name can\'t be @' )
     if angular.isFunction(name)
       callback = name
       name = null
     if !angular.isFunction(callback)
       return
-
+    name = name || '@'
     control = @$$getControl(name)
     #no control add list
     if control
@@ -111,7 +115,9 @@ GroupCtrl = ['$element','$attrs','$scope',(element,attrs,scope)->
       name = null
     if !angular.isFunction(callback)
       return
+    name = name || '@'
     control = @$$getControl(name)
+    # 如果control先调用removeControl，此处会找不到control
     if control
       control.unAttend(callback)
     else
