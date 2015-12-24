@@ -420,7 +420,6 @@
       this.setOption = function(option) {
         if (option) {
           this.$options = angular.extend({}, defaultOption, option);
-          return console.log(this.$options);
         }
       };
       this.attend = function(fn) {
@@ -521,7 +520,6 @@
         require: ['?^qInitOptions', 'qInit'],
         link: function(scope, element, attrs, ctrls) {
           var control, excute, lastPromise, onPromise, options;
-          console.log('q init');
           lastPromise = null;
           options = ctrls[0] && ctrls[0].$options ? ctrls[0].$options : dfInitOptions;
           control = ctrls[1];
