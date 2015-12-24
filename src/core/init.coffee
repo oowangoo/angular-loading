@@ -7,7 +7,7 @@ qInitDirective = ['defaultOption',(defaultOption)->
     priority:1000
     require:['?^qInitOptions','qInit']
     link:(scope, element, attrs,ctrls)->
-      console.log 'q init'
+      # console.log 'q init'
       lastPromise = null
 
       options = if ctrls[0] and ctrls[0].$options then ctrls[0].$options else dfInitOptions
