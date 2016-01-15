@@ -280,6 +280,9 @@
       removeUnAttend = function(name, callback) {
         var array;
         array = unAttendList[name];
+        if (!array) {
+          return;
+        }
         arrayRemove(array, callback);
       };
       this.$$getControl = function(name, exclude) {
@@ -319,7 +322,8 @@
           }
           controls[name] = control;
         } else {
-          controls['@'].push(control);
+          name = '@';
+          controls[name].push(control);
         }
         callbacks = getAndRemoveUnAttend(name);
         angular.forEach(callbacks, function(v) {
@@ -339,6 +343,9 @@
       };
       this.attend = function(name, callback) {
         var control;
+        if (name === '@') {
+          throw new Error('q control name can\'t be @');
+        }
         if (angular.isFunction(name)) {
           callback = name;
           name = null;
@@ -346,6 +353,7 @@
         if (!angular.isFunction(callback)) {
           return;
         }
+        name = name || '@';
         control = this.$$getControl(name);
         if (control) {
           control.attend(callback);
@@ -363,6 +371,7 @@
         if (!angular.isFunction(callback)) {
           return;
         }
+        name = name || '@';
         control = this.$$getControl(name);
         if (control) {
           return control.unAttend(callback);
@@ -517,6 +526,7 @@
       return {
         restrict: 'A',
         controller: "ControlCtrl",
+        priority: 1000,
         require: ['?^qInitOptions', 'qInit'],
         link: function(scope, element, attrs, ctrls) {
           var control, excute, lastPromise, onPromise, options;
